@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+    <html lang="pt-BR">
+        <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>Agendamento</title>
+            <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.css" rel="stylesheet" />
+            <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js"></script>
+            <script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
+        <style>
+            body {
+                font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+                background-color: #ffefef;
+                color: #000000;
+                padding: 20px;
+                max-width: 900px;
+                margin: auto;
+            }
+            #calendar {
+                max-width: 80%;
+                margin: 0 auto 30px auto;
+                background-color: rgb(255, 255, 255);
+                padding: 10px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                border: #000000 1px solid;
+                bottom: #ad6967;
+            }
+            #modal {
+                display: none;
+                position: fixed;
+                z-index: 999;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.5);
+                padding: 20px;
+                overflow-y: auto;
+            }
+            h2 {
+                margin-top: 40px;
+                text-align: center;
+                text-transform: uppercase;;
+            }
+            select {
+                width: 100%;
+                padding: 10px;
+                margin: 8px 0 16px 0;
+                box-sizing: border-box;
+                border: 1px solid #000000;
+                border-radius: 6px;
+                font-size: 16px;
+                background-color: #ffffff;
+                color: #000000;
+            }
+            select:hover {
+                background-color: #2adb21;
+            }
+            .modal-content {
+                background-color: white;
+                margin: auto;
+                padding: 20px;
+                width: 100%;
+                max-width: 400px;
+                border-radius: 10px;
+                text-align: left;
+                position: relative;
+            }
+            #fechar-modal {
+                position: absolute;
+                top: 10px;
+                right: 15px;
+                font-size: 20px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            #fechar-modal:hover {
+                color: red;
+            }
+            label {
+                display: block;
+                margin-top: 15px;
+                font-weight: bold;
+            }
+            input {
+                width: 100%;
+                padding: 10px;
+                margin-top: 5px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                font-size: 1em;
+                align-items: center;
+                transition: border-color 0.3s ease;
+            }
+            .horario-btn {
+                padding: 10px 15px;
+                margin: 5px 5px 0 0;
+                background: #3498db;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 1em;
+            }
+            .horario-btn.selected {
+                background-color: #2ecc71;
+            }
+            #btnAgendar {
+                margin-top: 20px;
+                padding: 12px;
+                width: 100%;
+                background-color: #27ae60;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 1em;
+            }
+            #btnAgendar:disabled {
+                background-color: #aaa;
+                cursor: not-allowed;
+            }
+            input[type="text"],
+            input[type="email"] {
+                display: block;
+                width: 100%;
+                padding: 10px;
+                margin: 8px 0 16px 0;
+                box-sizing: border-box;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                font-size: 16px;
+            }
+                @media (max-width: 600px) {
+                    .fc .fc-toolbar {
+                        flex-direction: column;
+                        align-items: center;
+                    }
+                    .fc .fc-toolbar-chunk {
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: center;
+                        gap: 10px;
+                        margin-bottom: 8px;
+                    }
+                    .fc .fc-toolbar-chunk button {
+                        font-size: 0.9rem !important;
+                        padding: 0.4em 1em !important;
+                        min-width: 60px !important;
+                        border-radius: 8px !important;
+                    }
+                    .fc .fc-toolbar-title {
+                        font-size: 1.5rem !important;
+                        text-align: center;
+                        padding: 0 5px;
+                        margin-bottom: 10px;
+                    }   
+                    .fc .fc-col-header-cell-cushion {
+                        font-size: 0.7rem !important;
+                        padding: 4px !important;
+                    }
+                    .fc .fc-daygrid-day-number {
+                        font-size: 0.85rem;
+                    }
+                    .fc .fc-daygrid-event {
+                        font-size: 0.75rem;
+                        padding: 2px 4px;
+                    }
+                    #calendar {
+                        margin: 0 auto 20px;
+                        padding: 0 10px;
+                        width: 100%;
+                        max-width: 100%;
+                    }
+                    #modal {
+                        display: none;
+                        position: fixed;
+                        z-index: 999;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(0,0,0,0.5);
+                        padding: 0;
+                        overflow-y: auto;
+                    }
+                    .modal-content {
+                        background-color: white;
+                        margin: 60px auto;
+                        padding: 20px 15px;
+                        width: 90%;
+                        max-width: 320px;
+                        border-radius: 10px;
+                        font-size: 0.9rem;
+                        position: relative;
+                        box-sizing: border-box;
+                        text-align: center;
+                    }
+                    #modal h2 {
+                        font-size: 1.2rem;
+                        margin-bottom: 10px;
+                        text-align: center;
+                    }
+                    label {
+                        display: block;
+                        font-size: 0.9rem;
+                        margin-top: 10px;
+                        text-align: left;
+                    }
+                    input,
+                    select {
+                        font-size: 0.9rem;
+                        padding: 8px;
+                        margin: 6px 0 12px;
+                        width: 100%;
+                        box-sizing: border-box;
+                    }
+                    select {
+                        max-width: 100%;
+                        white-space: nowrap;
+                    }
+                    .horario-btn {
+                        font-size: 0.8rem;
+                        padding: 6px 10px;
+                        margin: 5px 4px 0 0;
+                        border-radius: 6px;
+                    }
+                    #btnAgendar {
+                        font-size: 0.95rem;
+                        padding: 10px;
+                        margin-top: 15px;
+                        width: 100%;
+                    }
+                    #fechar-modal {
+                        top: 8px;
+                        right: 12px;
+                        font-size: 18px;
+                    }
+                }
+        </style>
+    </head>
+        <body>
+            <h1 style="text-align: center;">Calendário de Agendamento</h1>
+            <div id="calendar"></div>
+            <div id="modal">
+            <div class="modal-content">
+            <span id="fechar-modal" style="float: right; cursor: pointer;">&times;</span>
+            <h2 style="text-align: center;">Selecionar horário para <span id="data-selecionada"></span></h2>
+            <label for="cliente">Nome:</label>
+            <input type="text" id="cliente" placeholder="Seu nome" />
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Seu email" />
+            <label for="telefone">Telefone:</label>
+            <input type="text" id="telefone" placeholder="Seu telefone" />
+            <label for="servico">Serviço:</label>
+            <select id="servico">
+                <option value="">Selecione um Serviço.</option>
+                <option value="1">Manicure R$30 (1h).</option>
+                <option value="2">Pedicure R$35 (1h).</option>
+                <option value="3">Unha em Gel R$50 (1:30).</option>
+                <option value="4">Alongamento R$50 (2h).</option>
+                <option value="5">Blindagem R$80 (2h).</option>
+                <option value="6">Spa para pés R$100 (2h).</option>
+                <option value="7">Blindagem de construção R$120 (2h).</option>
+            </select>
+            <div id="horarios" class="horarios"></div>
+            <button id="btnAgendar" disabled>Agendar</button>
+            </div>
+            <div id="modalParabens">
+            </div>
+    </body>
+</html>

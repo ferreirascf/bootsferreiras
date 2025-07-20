@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+    <html lang="pt-BR">
+        <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>Painel da Profissional</title>
+            <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.css" rel="stylesheet" />
+            <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js"></script>
+            <script src="{{ url_for('static', filename='painel.js') }}" defer></script>
+        <style>
+            body {
+                font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+                background-color: #ffefef;
+                color: #000000;
+                padding: 20px;
+                max-width: 900px;
+                margin: auto;
+                text-align: center;
+            }
+            h1 {
+                text-align: center;
+            }
+            p {
+                text-align: center;
+                font-size: 1.2em;
+                margin-bottom: 20px;
+            }
+            #calendar {
+                max-width: 80%;
+                margin: 0 auto 30px auto;
+                background-color: rgb(255, 255, 255);
+                padding: 10px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                border: #000000 1px solid;
+            }
+            #modalBloquear,
+            #modalCancelar {
+                display: none;
+                position: fixed;
+                z-index: 999;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.5);
+                padding: 20px;
+                overflow-y: auto;
+            }
+            h2 {
+                margin-top: 40px;
+                text-align: center;
+                text-transform: uppercase;;
+            }
+            .modal-content {
+                background-color: white;
+                margin: auto;
+                padding: 20px;
+                width: 100%;
+                max-width: 400px;
+                border-radius: 10px;
+                text-align: center;
+                position: relative;
+            }
+            #fechar-bloquear, 
+            #fechar-cancelar {
+                position: absolute;
+                top: 10px;
+                right: 15px;
+                font-size: 24px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            #fechar-bloquear:hover, 
+            #fechar-cancelar:hover {
+                color: #e74c3c;
+            }
+            label {
+                display: block;
+                margin-top: 15px;
+                font-weight: bold;
+            }
+            input {
+                width: 100%;
+                padding: 10px;
+                margin-top: 5px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                font-size: 1em;
+                align-items: center;
+            }
+            .horario-btn {
+                padding: 10px 15px;
+                margin: 5px 5px 0 0;
+                background: #3498db;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 1em;
+            }
+            .horario-btn.selected {
+                background-color: #2ecc71;
+            }
+            #btnAgendar {
+                margin-top: 20px;
+                padding: 12px;
+                width: 100%;
+                background-color: #27ae60;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 1em;
+            }
+            #btnAgendar:disabled {
+                background-color: #aaa;
+                cursor: not-allowed;
+            }
+            input[type="text"],
+            input[type="email"] {
+                display: block;
+                width: 100%;
+                padding: 10px;
+                margin: 8px 0 16px 0;
+                box-sizing: border-box;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                font-size: 16px;
+            }
+            button#btnBloquear {
+                background-color: #e67e22;
+                color: white;
+            }
+            button#btnBloquear:hover {
+                background-color: #d35400;
+            }
+            button#btnCancelar {
+                background-color: #c0392b;
+                color: white;
+            }
+            button#btnCancelar:hover {
+                background-color: #922b21;
+            }
+            button#btnCancelarAgendamento {
+                background-color: #27ae60;
+                color: white;
+            }
+            button#btnCancelarAgendamento:hover {
+                background-color: #219150;
+            }
+            button#btnFechar {
+                background-color: #7f8c8d;
+                color: white;
+            }
+            button#btnFechar:hover {
+                background-color: #636e72;
+            }
+                @media (max-width: 600px) {
+                    .modal-content {
+                        width: 90% !important;
+                        max-width: 320px;
+                        margin: 40px auto;
+                        padding: 20px;
+                        box-sizing: border-box;
+                        text-align: center;
+                        border-radius: 12px;
+                    }
+                    .modal-content h2 {
+                        font-size: 1.2rem;
+                        margin-bottom: 10px;
+                    }
+                    #modalCancelar button,
+                    #modalBloquear button {
+                        display: block;
+                        width: 100% !important;
+                        max-width: 260px;
+                        margin: 10px auto !important;
+                        padding: 12px !important;
+                        font-size: 1rem !important;
+                        border-radius: 8px;
+                    }
+                    #modalCancelar p,
+                    #modalBloquear p {
+                        margin-bottom: 15px;
+                        font-size: 1rem;
+                    }
+                    #inputHoraBloqueio {
+                        width: 100%;
+                        max-width: 260px;
+                        margin: 10px auto;
+                        padding: 10px;
+                        font-size: 1rem;
+                        display: block;
+                        box-sizing: border-box;
+                    }
+                }
+            </style>
+        </head>
+    <body>
+        <h1>Painel da Profissional</h1>
+        <p>Clique em um dia e insira o horário que deseja bloquear (ex: 15:00)</p>
+        <div id="calendar"></div>
+        <div id="modalBloquear">
+            <div class="modal-content">
+            <span id="fechar-bloquear">&times;</span>
+            <h2>Bloquear Horário</h2>
+            <p>Insira o horário para bloquear (ex: 15:00)</p>
+            <input type="text" id="inputHoraBloqueio" placeholder="HH:MM" />
+            <button id="btnBloquear">Bloquear</button>
+            </div>
+        </div>
+        <div id="modalCancelar">
+            <div class="modal-content">
+            <span id="fechar-cancelar">&times;</span>
+            <h2>Cancelar Agendamento</h2>
+            <p id="infoAgendamento"></p>
+            <button id="btnCancelarAgendamento">Confirmar Cancelamento</button>
+            <button id="btnFechar">Fechar</button>
+            </div>
+        </div>
+    </body>
+</html>
