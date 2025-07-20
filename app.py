@@ -411,7 +411,7 @@ def agendamentos():
 
     return jsonify(eventos)
 
-@app.before_first_request
+@app.before_request
 def criar_banco():
     db.create_all()
 
