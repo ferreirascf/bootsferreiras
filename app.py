@@ -176,15 +176,25 @@ def listar_servicos():
 @login_required
 def horarios_do_dia(data):
     try:
-        data_dt = datetime.strptime(data.strip(), '%Y-%m-%d')
+        data_limpa = data.strip().split('T')[0]
+        data_dt = datetime.strptime(data_limpa, '%Y-%m-%d')
     except ValueError:
         return jsonify({"mensagem": "Formato de data inválido"}), 400
 
     proximo_dia = data_dt + timedelta(days=1)
-    agendamentos = Agendamento.query.filter(Agendamento.horario >= data_dt, Agendamento.horario < proximo_dia).all()
-    bloqueios = Bloqueio.query.filter(Bloqueio.horario >= data_dt, Bloqueio.horario < proximo_dia).all()
+
+    agendamentos = Agendamento.query.filter(
+        Agendamento.horario >= data_dt,
+        Agendamento.horario < proximo_dia
+    ).all()
+
+    bloqueios = Bloqueio.query.filter(
+        Bloqueio.horario >= data_dt,
+        Bloqueio.horario < proximo_dia
+    ).all()
 
     horarios_ocupados = set()
+    
     for a in agendamentos:
         atual = a.inicio
         while atual < a.fim:

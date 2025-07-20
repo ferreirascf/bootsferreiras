@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Data selecionada:', dataSelecionada);
             dataSelecionadaSpan.textContent = dataSelecionada;
             abrirModal();
-            carregarHorarios(dataSelecionada);
+            carregarHorarios(dataSelecionada.split("T")[0]);
         }
     });
 
