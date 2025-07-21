@@ -15,11 +15,13 @@ document.addEventListener('DOMContentLoaded', function() {
     let horarioSelecionado = null;
     let dataSelecionada = null;
 
+   
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'pt-br',
         selectable: true,
         hiddenDays: [0, 6],
+        events: '/agendamentos',  
         dateClick: function(info) {
             dataSelecionada = info.dateStr;
             console.log('Data selecionada:', dataSelecionada);
@@ -30,6 +32,28 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     calendar.render();
+
+    function carregarServicos() {
+        fetch('/servicos')
+        .then(res => res.json())
+        .then(servicos => {
+            servicoInput.innerHTML = '<option value="">Selecione um Serviço.</option>';
+            servicos.forEach(s => {
+                const duracaoHoras = Math.floor(s.duracao_minutos / 60);
+                const duracaoMinutos = s.duracao_minutos % 60;
+                const duracaoFormatada = duracaoMinutos > 0 
+                    ? `${duracaoHoras}h${duracaoMinutos}` 
+                    : `${duracaoHoras}h`;
+                const option = document.createElement('option');
+                option.value = s.id;
+                option.textContent = `${s.nome} R$${s.preco} (${duracaoFormatada})`;
+                servicoInput.appendChild(option);
+            });
+        })
+        .catch(() => {
+            servicoInput.innerHTML = '<option value="">Erro ao carregar serviços.</option>';
+        });
+    }
 
     function abrirModal() {
         horarioSelecionado = null;
@@ -173,4 +197,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.removeChild(modalParabens);
         };
     }
+
+    carregarServicos();
 });
