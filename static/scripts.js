@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     function carregarHorarios(data) {
-        fetch(`https://bootsferreiras.onrender.com/horarios/${data}`)
+        fetch(`/horarios/${data}`)
             .then(res => res.json())
             .then(horariosOcupados => {
                 horariosDiv.innerHTML = '';
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         btnAgendar.disabled = true;
 
-        fetch('https://bootsferreiras.onrender.com/agendar', {
+        fetch('/agendar', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({

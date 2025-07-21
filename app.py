@@ -7,10 +7,11 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from functools import wraps
-
-load_dotenv()
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app)
 app.secret_key = 'uma_chave_secreta_aleatoria_aqui'  
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///banco.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -173,7 +174,6 @@ def listar_servicos():
     } for s in servicos])
 
 @app.route('/horarios/<data>', methods=['GET'])
-@login_required
 def horarios_do_dia(data):
     try:
         data_limpa = data.strip().split('T')[0]
@@ -416,5 +416,7 @@ def criar_banco():
     db.create_all()
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
