@@ -9,7 +9,7 @@ from email.mime.multipart import MIMEMultipart
 from functools import wraps
 from flask_cors import CORS
 
-load_dotenv()  # Se estiver usando .env, para carregar variáveis de ambiente
+load_dotenv() 
 
 app = Flask(__name__)
 CORS(app)
@@ -434,6 +434,29 @@ def popular_servicos():
             db.session.add(novo)
     db.session.commit()
     print("Serviços inseridos no banco.")
+
+@app.route('/popular_servicos')
+def popular_servicos():
+    servicos_existentes = Servico.query.all()
+    if servicos_existentes:
+        return 'Serviços já cadastrados.'
+
+    servicos = [
+        {"nome": "Manicure", "preco": 30.0, "duracao_minutos": 60},
+        {"nome": "Pedicure", "preco": 35.0, "duracao_minutos": 60},
+        {"nome": "Unha em Gel", "preco": 50.0, "duracao_minutos": 90},
+        {"nome": "Alongamento", "preco": 50.0, "duracao_minutos": 120},
+        {"nome": "Blindagem", "preco": 80.0, "duracao_minutos": 120},
+        {"nome": "Spa para pés", "preco": 100.0, "duracao_minutos": 120},
+        {"nome": "Blindagem de construção", "preco": 120.0, "duracao_minutos": 120}
+    ]
+
+    for s in servicos:
+        novo = Servico(nome=s["nome"], preco=s["preco"], duracao_minutos=s["duracao_minutos"])
+        db.session.add(novo)
+
+    db.session.commit()
+    return 'Serviços cadastrados com sucesso!'
 
 if __name__ == '__main__':
     with app.app_context():

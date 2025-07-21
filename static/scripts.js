@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     calendar.render();
 
     function carregarServicos() {
-        fetch('/servicos')
+        fetch('https://bootsferreiras.onrender.com/servicos')
         .then(res => res.json())
         .then(servicos => {
             servicoInput.innerHTML = '<option value="">Selecione um Serviço.</option>';
